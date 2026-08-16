@@ -15,7 +15,7 @@ import { RADIO_PROGRAMS } from '@/data/programs';
 import { audioEngine } from '@/lib/audioEngine';
 import { Song, AmbientSettings, TimePeriod, RadioProgram } from '@/types';
 import { SONGS_DATABASE } from '@/data/songs';
-import { Volume2 } from 'lucide-react';
+import { Volume2, Play } from 'lucide-react';
 
 interface MonsoonWindowProps {
   location?: 'generic' | 'kolkata' | 'bangalore' | 'mumbai' | string;
@@ -27,7 +27,7 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
   const [periodOverride, setPeriodOverride] = useState<string | null>(null);
   const [variantIndex, setVariantIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentSongIndex, setCurrentSongIndex] = useState(0);
+  const [selectedSongId, setSelectedSongId] = useState<string>(SONGS_DATABASE[0].id);
   const [isCassetteDrawerOpen, setIsCassetteDrawerOpen] = useState(false);
   const [isMixerOpen, setIsMixerOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
@@ -44,8 +44,10 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
     isMuted: false,
   });
 
-  // Tick clock every second
+  // Keep live time and atmosphere synchronized every second
   useEffect(() => {
+    setTimeData(getCurrentTimeData(undefined, location));
+
     const timer = setInterval(() => {
       setTimeData(getCurrentTimeData(undefined, location));
     }, 1000);
@@ -83,32 +85,20 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
     return timeData.activeProgram || RADIO_PROGRAMS[0];
   }, [periodOverride, timeData.activeProgram]);
 
-  // Active playlist for current time period
-  const activeSongs: Song[] = useMemo(() => {
-    const filtered = SONGS_DATABASE.filter((s) => s.programId === activeProgram.id);
-    return filtered.length > 0 ? filtered : SONGS_DATABASE;
-  }, [activeProgram.id]);
-
-  // When program changes due to time period transition, reset to first track of that program
-  useEffect(() => {
-    setCurrentSongIndex(0);
-  }, [activeProgram.id]);
-
-  // Current active song with guaranteed safe fallback
+  // Current active song with guaranteed safe fallback (Defaults to Barsaat - Banjaare)
   const currentSong: Song = useMemo(() => {
-    if (!activeSongs || activeSongs.length === 0) return SONGS_DATABASE[0];
-    const safeIndex = ((currentSongIndex % activeSongs.length) + activeSongs.length) % activeSongs.length;
-    return activeSongs[safeIndex] || SONGS_DATABASE[0];
-  }, [activeSongs, currentSongIndex]);
+    return SONGS_DATABASE.find((s) => s.id === selectedSongId) || SONGS_DATABASE[0];
+  }, [selectedSongId]);
 
   // Initialize Web Audio upon user gesture or auto-start
   const unlockAudioContext = useCallback(() => {
-    if (!hasUserUnlockedAudio && audioEngine) {
+    if (audioEngine) {
       audioEngine.init();
       audioEngine.updateSettings(ambientSettings, activePeriod?.rainIntensity ?? 0.5);
-      setHasUserUnlockedAudio(true);
     }
-  }, [hasUserUnlockedAudio, ambientSettings, activePeriod?.rainIntensity]);
+    setHasUserUnlockedAudio(true);
+    setIsPlaying(true);
+  }, [ambientSettings, activePeriod?.rainIntensity]);
 
   // Keep ambient settings synchronized with audio engine
   useEffect(() => {
@@ -117,12 +107,12 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
     }
   }, [ambientSettings, activePeriod?.rainIntensity, hasUserUnlockedAudio]);
 
-  // Auto-play 1 second after page loads
+  // Auto-play attempt on desktop / responsive startup
   useEffect(() => {
     const autoPlayTimer = setTimeout(() => {
       setIsPlaying(true);
       unlockAudioContext();
-    }, 1000);
+    }, 800);
 
     return () => clearTimeout(autoPlayTimer);
   }, [unlockAudioContext]);
@@ -134,38 +124,30 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
 
   const handleNext = () => {
     unlockAudioContext();
-    setCurrentSongIndex((prev) => (prev + 1) % (activeSongs.length || 1));
+    const currentIndex = SONGS_DATABASE.findIndex((s) => s.id === selectedSongId);
+    const nextSong = SONGS_DATABASE[(currentIndex + 1) % SONGS_DATABASE.length];
+    setSelectedSongId(nextSong.id);
+    setIsPlaying(true);
   };
 
   const handlePrev = () => {
     unlockAudioContext();
-    setCurrentSongIndex((prev) => (prev - 1 + (activeSongs.length || 1)) % (activeSongs.length || 1));
+    const currentIndex = SONGS_DATABASE.findIndex((s) => s.id === selectedSongId);
+    const prevSong = SONGS_DATABASE[(currentIndex - 1 + SONGS_DATABASE.length) % SONGS_DATABASE.length];
+    setSelectedSongId(prevSong.id);
+    setIsPlaying(true);
   };
 
   const handleSelectSong = (song: Song) => {
     unlockAudioContext();
-    const index = activeSongs.findIndex((s) => s.id === song.id);
-    if (index !== -1) {
-      setCurrentSongIndex(index);
-    } else {
-      // Find matching period for this song's program if different
-      const matchingPeriodKey = Object.keys(scenes).find(
-        (k) => getProgramForPeriod(k).id === song.programId
-      );
-      if (matchingPeriodKey) {
-        setPeriodOverride(matchingPeriodKey);
-      }
-      const globalIndex = SONGS_DATABASE.findIndex((s) => s.id === song.id);
-      if (globalIndex !== -1) {
-        setCurrentSongIndex(globalIndex);
-      }
-    }
+    setSelectedSongId(song.id);
     setIsPlaying(true);
   };
 
   return (
     <main
       onClick={unlockAudioContext}
+      onTouchStart={unlockAudioContext}
       className="fixed inset-0 w-full h-[100dvh] max-h-[100dvh] overflow-hidden bg-monsoon-ink text-white font-sans flex flex-col justify-between select-none"
     >
       {/* 1. Dynamic Exterior Monsoon City & Weather Scene */}
@@ -195,12 +177,27 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
         onToggleVariant={handleToggleVariant}
       />
 
-      {/* 4. Center Subtle Prompt if not started */}
-      {!isPlaying && !hasUserUnlockedAudio && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-35 pointer-events-none text-center animate-in fade-in zoom-in-95 duration-500 w-[90vw] max-w-sm">
-          <div className="bg-black/75 backdrop-blur-md px-4 py-2 sm:px-5 rounded-full border border-amber-500/30 shadow-2xl flex items-center justify-center gap-2 text-[11px] sm:text-xs font-mono text-amber-300">
-            <Volume2 className="w-4 h-4 text-amber-400 animate-pulse flex-shrink-0" />
-            <span className="truncate">Tap anywhere to step into room & tune radio</span>
+      {/* 4. Center Tap Prompt if not playing */}
+      {!isPlaying && (
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            handlePlayToggle();
+          }}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            handlePlayToggle();
+          }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-35 cursor-pointer text-center animate-in fade-in zoom-in-95 duration-500 w-[90vw] max-w-sm pointer-events-auto"
+        >
+          <div className="bg-black/85 backdrop-blur-md px-5 py-3 rounded-2xl border border-amber-500/40 shadow-2xl flex items-center justify-center gap-3 text-xs font-mono text-amber-300 active:scale-95 transition-transform hover:border-amber-400">
+            <div className="w-9 h-9 rounded-full bg-amber-500 text-black flex items-center justify-center flex-shrink-0 shadow-lg">
+              <Play className="w-4 h-4 fill-current ml-0.5" />
+            </div>
+            <div className="text-left min-w-0">
+              <div className="font-bold text-white text-xs sm:text-sm truncate">Tap to Tune Radio & Listen</div>
+              <div className="text-[10px] text-amber-400/80 truncate">98.7 FM • {currentSong.title} ({currentSong.artist})</div>
+            </div>
           </div>
         </div>
       )}

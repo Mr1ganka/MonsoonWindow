@@ -201,10 +201,11 @@ export default function RadioPlayer({
     return () => clearInterval(interval);
   }, [isPlaying, song.durationSeconds]);
 
-  // 5. Seek handler
-  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+  // 5. Seek handler (Supports Mouse & Touch on Mobile)
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const clickPos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clickPos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     const seekTarget = clickPos * duration;
     if (playerRef.current && typeof playerRef.current.seekTo === 'function') {
       try {
@@ -457,6 +458,7 @@ export default function RadioPlayer({
             </span>
             <div
               onClick={handleSeek}
+              onTouchStart={handleSeek}
               className="relative flex-grow h-2 sm:h-1.5 bg-white/10 rounded-full cursor-pointer overflow-hidden group py-1 sm:py-0"
             >
               <div
