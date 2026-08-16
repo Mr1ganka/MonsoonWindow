@@ -303,9 +303,9 @@ export default function RadioPlayer({
       {/* Main Glassmorphic Radio Console */}
       <div className="bg-[#120e0b]/94 border border-white/15 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex flex-col md:flex-row items-center justify-between gap-2.5 sm:gap-4 pointer-events-auto">
         {/* Left Side: Retro TV/Cassette Screen & Program Metadata */}
-        <div className="w-full md:w-1/2 flex items-center gap-2.5 sm:gap-3.5 bg-black/60 border border-white/8 rounded-xl p-2 sm:p-2.5 shadow-inner">
+        <div className="w-full md:w-1/2 flex items-center gap-2 sm:gap-3.5 bg-black/60 border border-white/8 rounded-xl p-1.5 sm:p-2.5 shadow-inner min-w-0">
           {/* Vintage CRT / Cassette Monitor Screen with Live YouTube Video */}
-          <div className="relative w-20 h-14 sm:w-28 sm:h-18 rounded-lg overflow-hidden border border-white/15 flex-shrink-0 bg-black shadow-md group">
+          <div className="relative w-16 h-12 sm:w-28 sm:h-18 rounded-lg overflow-hidden border border-white/15 flex-shrink-0 bg-black shadow-md group">
             {/* The Live YouTube Video Embed mounts here */}
             <div className="w-full h-full overflow-hidden">
               <div id="yt-radio-screen" className="w-full h-full object-cover pointer-events-auto" />

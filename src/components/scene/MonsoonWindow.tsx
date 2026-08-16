@@ -166,7 +166,7 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
   return (
     <main
       onClick={unlockAudioContext}
-      className="relative w-screen h-screen max-h-screen overflow-hidden bg-monsoon-ink text-white font-sans flex flex-col justify-between"
+      className="fixed inset-0 w-full h-[100dvh] max-h-[100dvh] overflow-hidden bg-monsoon-ink text-white font-sans flex flex-col justify-between select-none"
     >
       {/* 1. Dynamic Exterior Monsoon City & Weather Scene */}
       <SceneRenderer timePeriod={activePeriod} variantIndex={variantIndex} />
@@ -198,7 +198,7 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
       {/* 4. Center Subtle Prompt if not started */}
       {!isPlaying && !hasUserUnlockedAudio && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-35 pointer-events-none text-center animate-in fade-in zoom-in-95 duration-500 w-[90vw] max-w-sm">
-          <div className="bg-black/75 backdrop-blur-md px-4 py-2.5 sm:px-5 rounded-full border border-amber-500/30 shadow-2xl flex items-center justify-center gap-2 text-[11px] sm:text-xs font-mono text-amber-300">
+          <div className="bg-black/75 backdrop-blur-md px-4 py-2 sm:px-5 rounded-full border border-amber-500/30 shadow-2xl flex items-center justify-center gap-2 text-[11px] sm:text-xs font-mono text-amber-300">
             <Volume2 className="w-4 h-4 text-amber-400 animate-pulse flex-shrink-0" />
             <span className="truncate">Tap anywhere to step into room & tune radio</span>
           </div>
@@ -206,7 +206,7 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
       )}
 
       {/* 5. Bottom Radio & Music Console */}
-      <div className="relative z-40 mb-2 sm:mb-3 pointer-events-none">
+      <div className="relative z-40 mb-1 sm:mb-3 pointer-events-none">
         <RadioPlayer
           currentSong={currentSong}
           activeProgram={activeProgram}
@@ -221,7 +221,7 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
 
       {/* 6. Soundboard / Ambient Mixer Popover */}
       {isMixerOpen && (
-        <div className="fixed bottom-24 sm:bottom-28 right-3 left-3 sm:left-auto sm:right-8 z-40 max-w-sm ml-auto animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed bottom-20 sm:bottom-28 right-2 left-2 sm:left-auto sm:right-8 z-45 max-w-sm ml-auto animate-in fade-in slide-in-from-bottom-4 duration-300">
           <AmbientMixer
             settings={ambientSettings}
             onChange={setAmbientSettings}
