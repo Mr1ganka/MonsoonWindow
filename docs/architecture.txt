@@ -1,0 +1,710 @@
+Build a production-quality immersive web experience called:
+
+"MONSOON WINDOW"
+
+Tagline:
+"Somewhere between the rain and the radio."
+
+The website should feel like the user is sitting inside an Indian apartment during monsoon season, looking through a large window at the city outside while listening to a carefully curated stream of music.
+
+This is NOT a conventional music player.
+
+It should feel like an atmospheric digital place that the user can leave open for hours.
+
+IMPORTANT:
+- Create an original visual identity.
+- Do not copy any existing website's source code, branding, layout, artwork, or exact visual design.
+- The experience should be inspired by Indian monsoon nostalgia, rainy evenings, old apartments, FM radio, chai, city traffic, and music.
+- Prioritize atmosphere, animation, sound, typography, and small details.
+- The website should feel cinematic but intimate.
+- Avoid generic "rainy wallpaper" aesthetics.
+
+TECH STACK
+
+Use:
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- CSS animations
+- Canvas/WebGL only where useful
+- HTML5 audio / legally permitted external music playback
+- Componentized architecture
+
+Make the site responsive and optimized for desktop and mobile.
+
+==================================================
+CORE EXPERIENCE
+==================================================
+
+The entire website should represent a single room.
+
+The user is sitting inside near a large window.
+
+Outside the window is an Indian city during monsoon season.
+
+Inside the room:
+
+- old wooden desk
+- warm table lamp
+- steaming cup of chai
+- small FM radio
+- notebook/book
+- curtains moving slightly from the wind
+- occasional condensation on the window
+- subtle reflections on the glass
+
+Outside:
+
+- monsoon rain
+- wet roads
+- traffic
+- motorcycles
+- buses
+- apartment buildings
+- balconies
+- streetlights
+- trees moving in the wind
+- umbrellas
+- distant headlights
+- occasional lightning
+- puddles reflecting lights
+
+The room should remain recognizable throughout the entire day.
+
+==================================================
+TIME-BASED WORLD
+==================================================
+
+This is one of the most important features.
+
+The environment MUST change according to the user's local time.
+
+Do not simply display the time as text.
+
+The actual WORLD should respond to time.
+
+Use the user's local timezone.
+
+Example:
+
+06:00–08:00
+DAWN
+
+- pale blue/grey sky
+- very soft light
+- light rain
+- mostly empty streets
+- occasional early-morning vehicles
+- dim apartment windows
+- cool interior lighting
+- birds occasionally audible
+
+08:00–12:00
+MONSOON MORNING
+
+- brighter grey sky
+- steady rainfall
+- more traffic
+- people with umbrellas
+- brighter room
+- cool daylight entering through window
+
+12:00–16:00
+HEAVY RAIN
+
+- dark storm clouds
+- intense rainfall
+- windshield/headlight reflections
+- occasional thunder
+- strong wind
+- trees moving
+- darker room despite daytime
+
+16:00–18:30
+RAINY GOLDEN HOUR
+
+- warm sunlight attempting to break through clouds
+- orange/yellow reflections on wet roads
+- rain gradually becoming lighter
+- traffic increasing
+- beautiful golden reflections
+- warm interior lighting
+
+18:30–22:00
+MONSOON EVENING
+
+- dark blue sky
+- city lights turn on
+- streetlights reflect on wet roads
+- traffic headlights
+- umbrellas
+- rain continues
+- warm room lighting
+- stronger contrast between interior and exterior
+
+22:00–02:00
+NIGHT RAIN
+
+- deep blue/black sky
+- heavy rain
+- mostly empty roads
+- headlights passing occasionally
+- glowing apartment windows
+- distant neon signs
+- warm desk lamp
+- quiet intimate atmosphere
+
+02:00–06:00
+DEEP NIGHT
+
+- almost black sky
+- very few vehicles
+- extremely subtle rain
+- occasional distant headlights
+- quiet apartment buildings
+- only a few illuminated windows
+- warm lamp becomes the primary light source
+- extremely calm atmosphere
+
+==================================================
+BACKGROUND SCENE SYSTEM
+==================================================
+
+DO NOT hardcode one background image.
+
+Create a modular background system.
+
+Each time period should support its own visual scene.
+
+Example:
+
+/public/scenes/
+
+dawn/
+morning/
+heavy-rain/
+golden-hour/
+evening/
+night/
+deep-night/
+
+Each scene can contain:
+
+- background image
+- optional looping video
+- optional animated GIF
+- foreground rain layer
+- lighting overlay
+- particles
+- environmental effects
+
+Create a reusable SceneManager component.
+
+The SceneManager should:
+
+1. Determine local time.
+2. Determine the current scene.
+3. Load the appropriate assets.
+4. Crossfade between scenes.
+5. Never create a harsh visual cut.
+6. Continue running if the user leaves the page open.
+7. Update automatically as time changes.
+
+When transitioning between scenes:
+
+- fade current scene out
+- fade next scene in
+- gradually modify lighting
+- gradually modify rain intensity
+- gradually modify ambient audio
+- gradually modify traffic density
+
+The transition should feel like time is naturally passing.
+
+==================================================
+BACKGROUND MEDIA
+==================================================
+
+The implementation must support three types of background:
+
+1. STATIC IMAGE
+2. LOOPING VIDEO
+3. ANIMATED PROCEDURAL BACKGROUND
+
+Do not assume every scene needs video.
+
+Use the most efficient medium for each scene.
+
+For example:
+
+Dawn:
+static image + procedural rain
+
+Heavy rain:
+looping video + rain overlay
+
+Night:
+looping video + animated headlights
+
+Deep night:
+static image + procedural rain + particles
+
+The architecture should allow these assets to be swapped without changing application logic.
+
+==================================================
+PROCEDURAL WEATHER
+==================================================
+
+Add an independent weather animation layer.
+
+Rain should not be baked entirely into the background.
+
+Create procedural rain using Canvas or CSS.
+
+Rain intensity should depend on the current time period.
+
+Example:
+
+DAWN:
+20% rain intensity
+
+MORNING:
+45%
+
+HEAVY RAIN:
+90%
+
+GOLDEN HOUR:
+30%
+
+EVENING:
+60%
+
+NIGHT:
+75%
+
+DEEP NIGHT:
+25%
+
+Also create:
+
+- occasional raindrops sliding down glass
+- small window condensation
+- subtle water droplets
+- wind-driven rain
+- distant lightning
+
+Lightning should happen rarely and randomly.
+
+Never make lightning repetitive.
+
+==================================================
+AUDIO
+==================================================
+
+Music is a central part of the experience.
+
+Create a fictional station:
+
+"MONSOON FM"
+
+98.7 FM
+
+Current program examples:
+
+06:00 — Baarish Ki Subah
+09:00 — Chai & Clouds
+12:00 — Dopahar Ki Baarish
+16:00 — Shaam Ka Safar
+20:00 — Baarish After Dark
+00:00 — Raat Aur Baarish
+
+Use a structured song database.
+
+Each song:
+
+{
+  title,
+  artist,
+  youtubeId,
+  spotifyUrl,
+  youtubeMusicUrl,
+  program,
+  mood,
+  language
+}
+
+Do NOT download or illegally host copyrighted music.
+
+Use YouTube embeds/API or another legally permitted playback system.
+
+The website should feel like a curated radio station rather than Spotify.
+
+==================================================
+NOW PLAYING
+==================================================
+
+The radio should display:
+
+MONSOON FM
+98.7 FM
+
+NOW PLAYING
+
+Artist
+Song Title
+
+Example:
+
+Jagjit Singh
+Hothon Se Chhoo Lo Tum
+
+Show:
+
+- animated equalizer
+- station logo
+- song progress
+- play/pause
+- next
+- previous
+- volume
+- mute
+
+When the song changes:
+
+- artwork changes
+- title changes
+- artist changes
+- interface subtly animates
+- equalizer changes
+- ambient background responds
+
+==================================================
+ROOM INTERACTION
+==================================================
+
+The user should be able to interact with the room.
+
+Clickable objects:
+
+RADIO
+
+Clicking the radio:
+- opens the music controls
+- radio display glows
+- subtle static sound
+- station frequency appears
+
+CHAI
+
+Clicking the cup:
+- steam animation increases
+- subtle chai ambience
+- tiny message:
+  "Still warm."
+
+WINDOW
+
+Clicking the window:
+- rain sound increases
+- subtle glass reflection
+- closer rain animation
+
+LAMP
+
+Clicking the lamp:
+- toggle warm/cool lighting
+
+NOTEBOOK
+
+Clicking notebook:
+- display a short fictional handwritten thought about rain
+
+CURTAINS
+
+Cursor movement / interaction should subtly move the curtains.
+
+Do not make the interactions feel like a game.
+
+They should feel like discovering details in a real room.
+
+==================================================
+AMBIENT AUDIO
+==================================================
+
+Separate music from environmental audio.
+
+Layers:
+
+1. MUSIC
+2. RAIN
+3. ROOM TONE
+4. DISTANT TRAFFIC
+5. OCCASIONAL THUNDER
+6. FAN / ELECTRIC HUM
+
+Allow independent volume controls.
+
+Example:
+
+Music       ████████░░
+Rain        █████████░
+Traffic     ████░░░░░░
+Room        █████░░░░░
+
+Default to a comfortable low ambient volume.
+
+Respect browser autoplay restrictions.
+
+Do not start audio unexpectedly if browser policy prevents it.
+
+==================================================
+VISUAL STYLE
+==================================================
+
+The visual style should combine:
+
+- Indian apartment interiors
+- monsoon season
+- old FM radios
+- 90s/2000s nostalgia
+- warm tungsten lighting
+- wet asphalt
+- muted colors
+- film photography
+- analog electronics
+- subtle grain
+
+Color palette:
+
+Interior:
+warm amber
+brown
+cream
+dark wood
+
+Exterior:
+slate blue
+grey
+deep navy
+muted green
+
+Rain:
+cool blue-grey
+
+Lights:
+warm orange/yellow
+
+Avoid:
+
+- generic cyberpunk neon
+- excessive purple gradients
+- glassmorphism
+- SaaS dashboard aesthetics
+- excessive rounded cards
+- huge hero text
+- generic stock-photo appearance
+
+==================================================
+CAMERA / PARALLAX
+==================================================
+
+The entire room should have subtle depth.
+
+Create layers:
+
+FOREGROUND
+- window frame
+- curtain
+- desk
+
+MIDGROUND
+- rain
+- reflections
+- room objects
+
+BACKGROUND
+- city
+- buildings
+- traffic
+
+Far background:
+- clouds
+- distant lights
+
+On desktop, mouse movement should create extremely subtle parallax.
+
+On mobile, use gyroscope/parallax only if appropriate and permitted.
+
+Keep movement slow.
+
+==================================================
+TIME UI
+==================================================
+
+Display a small clock:
+
+08:42 PM
+
+Below it:
+
+BENGALURU
+MONSOON
+
+Also display:
+
+TODAY'S WEATHER
+RAINING
+
+But don't make the weather UI dominate the experience.
+
+The environment itself should communicate the time.
+
+==================================================
+TRANSITION SYSTEM
+==================================================
+
+This is critical.
+
+Do NOT switch scenes abruptly.
+
+Example:
+
+At 18:25:
+
+- daylight gradually becomes warmer
+- sky becomes darker
+- street lights slowly appear
+- traffic headlights become more visible
+- interior lamp becomes brighter
+- rain changes intensity
+- music program transitions
+- ambient sound changes
+
+By 18:30 the evening scene is fully active.
+
+Use long, cinematic transitions.
+
+==================================================
+MOBILE
+==================================================
+
+Mobile should feel like looking through a phone-sized window.
+
+Do not simply shrink desktop.
+
+On mobile:
+
+- prioritize window
+- radio/player remains accessible
+- secondary objects can disappear
+- maintain atmospheric background
+- controls should be thumb friendly
+
+==================================================
+PERFORMANCE
+==================================================
+
+This is extremely important.
+
+- Optimize all video assets.
+- Use WebM/MP4 where appropriate.
+- Lazy-load scenes that are not currently needed.
+- Do not load every day's worth of video simultaneously.
+- Pause inactive video elements.
+- Use requestAnimationFrame efficiently.
+- Reduce particle counts on mobile.
+- Respect prefers-reduced-motion.
+- Pause expensive animations when the tab is hidden.
+- Avoid unnecessary React re-renders.
+
+==================================================
+ARCHITECTURE
+==================================================
+
+Create components:
+
+/components
+
+MonsoonWindow
+SceneManager
+SceneRenderer
+WeatherLayer
+RainCanvas
+WindowReflections
+Room
+Radio
+NowPlaying
+Equalizer
+MusicPlayer
+AmbientControls
+Clock
+ProgramSchedule
+InteractiveObject
+ChaiCup
+Lamp
+Notebook
+Curtains
+TimeTransition
+
+/data
+
+songs.ts
+programs.ts
+scenes.ts
+ambientSounds.ts
+
+/lib
+
+timeEngine.ts
+sceneEngine.ts
+audioEngine.ts
+weatherEngine.ts
+
+The SceneManager should be completely independent from the music player.
+
+==================================================
+MOST IMPORTANT CREATIVE REQUIREMENT
+==================================================
+
+The website should not feel like:
+
+"Here is a rainy background + music player."
+
+It should feel like:
+
+"You are sitting in a real apartment during monsoon season, and time is passing outside the window."
+
+The user should be able to open the site at 8 AM and leave it open until midnight.
+
+At 8 AM it should feel like morning.
+
+At 1 PM it should feel like afternoon.
+
+At 5 PM it should feel like golden-hour rain.
+
+At 8 PM it should feel like a rainy city night.
+
+At 2 AM it should feel almost completely silent.
+
+The website should tell the passage of time without requiring the user to look at a clock.
+
+FINAL REQUIREMENT
+
+Before finishing:
+
+- Test every time period.
+- Test scene transitions.
+- Test mobile.
+- Test desktop.
+- Test background video fallback.
+- Test image fallback.
+- Test reduced motion.
+- Test audio autoplay restrictions.
+- Test leaving the page open for several hours.
+- Ensure no memory leaks from Canvas/video/audio.
+- Ensure inactive scenes are unloaded or paused.
+- Ensure the experience remains smooth on mid-range mobile devices.
+
+The final result should feel like a beautiful interactive monsoon memory rather than a website.
