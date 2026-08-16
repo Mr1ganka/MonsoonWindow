@@ -46,7 +46,7 @@ export default function Curtains() {
       </div>
 
       {/* 2. Left Curtain Panel (Realistic Lightweight Linen Fabric) */}
-      <div className="absolute top-4 left-0 w-28 sm:w-48 h-full origin-top animate-curtain-left z-22">
+      <div className="absolute top-4 left-0 w-12 sm:w-36 md:w-48 h-full origin-top animate-curtain-left z-22">
         {/* Soft cast drop shadow on the window behind it */}
         <div className="absolute inset-0 w-full h-full bg-black/40 blur-lg -translate-x-2 pointer-events-none" />
 
@@ -84,14 +84,14 @@ export default function Curtains() {
         </div>
 
         {/* Soft Linen Tieback Sash at Mid-Height */}
-        <div className="absolute top-1/2 -left-1 w-24 sm:w-36 h-4 -translate-y-1/2 pointer-events-none flex items-center justify-end pr-1 z-23">
+        <div className="absolute top-1/2 -left-1 w-10 sm:w-36 h-4 -translate-y-1/2 pointer-events-none flex items-center justify-end pr-1 z-23">
           <div className="w-full h-1.5 rounded-full bg-gradient-to-r from-transparent via-[#704d2c] to-[#b38928] shadow-sm opacity-80 border-y border-[#d4af37]/20" />
-          <div className="w-2.5 h-3 rounded-full bg-gradient-to-b from-[#edd074] to-[#6d4a13] border border-[#f5df88]/60 shadow-md -ml-1 flex-shrink-0" />
+          <div className="w-2 sm:w-2.5 h-2.5 sm:h-3 rounded-full bg-gradient-to-b from-[#edd074] to-[#6d4a13] border border-[#f5df88]/60 shadow-md -ml-1 flex-shrink-0" />
         </div>
       </div>
 
       {/* 3. Right Curtain Panel (Realistic Lightweight Linen Fabric) */}
-      <div className="absolute top-4 right-0 w-28 sm:w-48 h-full origin-top animate-curtain-right z-22">
+      <div className="absolute top-4 right-0 w-12 sm:w-36 md:w-48 h-full origin-top animate-curtain-right z-22">
         {/* Soft cast drop shadow on the window behind it */}
         <div className="absolute inset-0 w-full h-full bg-black/40 blur-lg translate-x-2 pointer-events-none" />
 
@@ -129,8 +129,8 @@ export default function Curtains() {
         </div>
 
         {/* Soft Linen Tieback Sash at Mid-Height */}
-        <div className="absolute top-1/2 -right-1 w-24 sm:w-36 h-4 -translate-y-1/2 pointer-events-none flex items-center justify-start pl-1 z-23">
-          <div className="w-2.5 h-3 rounded-full bg-gradient-to-b from-[#edd074] to-[#6d4a13] border border-[#f5df88]/60 shadow-md -mr-1 flex-shrink-0" />
+        <div className="absolute top-1/2 -right-1 w-10 sm:w-36 h-4 -translate-y-1/2 pointer-events-none flex items-center justify-start pl-1 z-23">
+          <div className="w-2 sm:w-2.5 h-2.5 sm:h-3 rounded-full bg-gradient-to-b from-[#edd074] to-[#6d4a13] border border-[#f5df88]/60 shadow-md -mr-1 flex-shrink-0" />
           <div className="w-full h-1.5 rounded-full bg-gradient-to-l from-transparent via-[#704d2c] to-[#b38928] shadow-sm opacity-80 border-y border-[#d4af37]/20" />
         </div>
       </div>

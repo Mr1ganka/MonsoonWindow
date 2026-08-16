@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { TimePeriod } from '@/types';
 import { TIME_PERIODS, getSceneBgImage } from '@/data/scenes';
+import { getAssetPath } from '@/lib/assetPath';
 import RainCanvas from './RainCanvas';
 import GlassCondensation from './GlassCondensation';
 
@@ -24,7 +25,7 @@ export default function SceneRenderer({ timePeriod, activeBgImage, variantIndex 
 
     // Image load preflight & fallback verification
     const img = new Image();
-    img.src = targetImage;
+    img.src = getAssetPath(targetImage);
     img.onerror = () => {
       // Graceful fallback to generic scene if a specific city image doesn't exist yet
       const fallbackUrl = `/scenes/generic/${period?.id === 'heavy-rain' ? 'afternoon' : period?.id || 'morning'}.webp`;
@@ -44,7 +45,7 @@ export default function SceneRenderer({ timePeriod, activeBgImage, variantIndex 
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out scale-105"
         style={{
-          backgroundImage: `url(${currentImage})`,
+          backgroundImage: `url(${getAssetPath(currentImage)})`,
           filter: `brightness(${roomLightLevel < 0.3 ? 0.75 : 0.95}) contrast(1.05) saturate(0.95)`,
         }}
       />

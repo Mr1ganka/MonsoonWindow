@@ -54,7 +54,7 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
   }, [location]);
 
   // Safe fallback period
-  const defaultPeriod: TimePeriod = scenes['morning'] || Object.values(scenes)[0];
+  const defaultPeriod: TimePeriod = scenes['morning'] || Object.values(scenes)[0] || TIME_PERIODS['morning'];
 
   // Compute active period considering any override
   const activePeriod: TimePeriod = useMemo(() => {
@@ -67,13 +67,13 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
   // Reset variant index when period or location changes
   useEffect(() => {
     setVariantIndex(0);
-  }, [activePeriod.id, location]);
+  }, [activePeriod?.id, location]);
 
   const handleToggleVariant = useCallback(() => {
-    if (activePeriod.bgImages && activePeriod.bgImages.length > 1) {
+    if (activePeriod?.bgImages && activePeriod.bgImages.length > 1) {
       setVariantIndex((prev) => (prev + 1) % activePeriod.bgImages!.length);
     }
-  }, [activePeriod.bgImages]);
+  }, [activePeriod?.bgImages]);
 
   // Compute active program considering any override
   const activeProgram: RadioProgram = useMemo(() => {
@@ -89,9 +89,13 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
     return filtered.length > 0 ? filtered : SONGS_DATABASE;
   }, [activeProgram.id]);
 
-  // Current active song with guaranteed safe fallback (First song: Barsaat by Banjaare)
+  // When program changes due to time period transition, reset to first track of that program
+  useEffect(() => {
+    setCurrentSongIndex(0);
+  }, [activeProgram.id]);
+
+  // Current active song with guaranteed safe fallback
   const currentSong: Song = useMemo(() => {
-    if (currentSongIndex === 0) return SONGS_DATABASE[0];
     if (!activeSongs || activeSongs.length === 0) return SONGS_DATABASE[0];
     const safeIndex = ((currentSongIndex % activeSongs.length) + activeSongs.length) % activeSongs.length;
     return activeSongs[safeIndex] || SONGS_DATABASE[0];
@@ -101,17 +105,17 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
   const unlockAudioContext = useCallback(() => {
     if (!hasUserUnlockedAudio && audioEngine) {
       audioEngine.init();
-      audioEngine.updateSettings(ambientSettings, activePeriod.rainIntensity || 0.5);
+      audioEngine.updateSettings(ambientSettings, activePeriod?.rainIntensity ?? 0.5);
       setHasUserUnlockedAudio(true);
     }
-  }, [hasUserUnlockedAudio, ambientSettings, activePeriod.rainIntensity]);
+  }, [hasUserUnlockedAudio, ambientSettings, activePeriod?.rainIntensity]);
 
   // Keep ambient settings synchronized with audio engine
   useEffect(() => {
     if (hasUserUnlockedAudio && audioEngine) {
-      audioEngine.updateSettings(ambientSettings, activePeriod.rainIntensity || 0.5);
+      audioEngine.updateSettings(ambientSettings, activePeriod?.rainIntensity ?? 0.5);
     }
-  }, [ambientSettings, activePeriod.rainIntensity, hasUserUnlockedAudio]);
+  }, [ambientSettings, activePeriod?.rainIntensity, hasUserUnlockedAudio]);
 
   // Auto-play 1 second after page loads
   useEffect(() => {
@@ -130,12 +134,12 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
 
   const handleNext = () => {
     unlockAudioContext();
-    setCurrentSongIndex((prev) => (prev + 1) % activeSongs.length);
+    setCurrentSongIndex((prev) => (prev + 1) % (activeSongs.length || 1));
   };
 
   const handlePrev = () => {
     unlockAudioContext();
-    setCurrentSongIndex((prev) => (prev - 1 + activeSongs.length) % activeSongs.length);
+    setCurrentSongIndex((prev) => (prev - 1 + (activeSongs.length || 1)) % (activeSongs.length || 1));
   };
 
   const handleSelectSong = (song: Song) => {
@@ -144,7 +148,13 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
     if (index !== -1) {
       setCurrentSongIndex(index);
     } else {
-      // Find index in global songs database
+      // Find matching period for this song's program if different
+      const matchingPeriodKey = Object.keys(scenes).find(
+        (k) => getProgramForPeriod(k).id === song.programId
+      );
+      if (matchingPeriodKey) {
+        setPeriodOverride(matchingPeriodKey);
+      }
       const globalIndex = SONGS_DATABASE.findIndex((s) => s.id === song.id);
       if (globalIndex !== -1) {
         setCurrentSongIndex(globalIndex);
@@ -187,10 +197,10 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
 
       {/* 4. Center Subtle Prompt if not started */}
       {!isPlaying && !hasUserUnlockedAudio && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-35 pointer-events-none text-center animate-in fade-in zoom-in-95 duration-500">
-          <div className="bg-black/60 backdrop-blur-md px-5 py-2.5 rounded-full border border-amber-500/30 shadow-2xl flex items-center gap-2.5 text-xs font-mono text-amber-300">
-            <Volume2 className="w-4 h-4 text-amber-400 animate-pulse" />
-            <span>Click anywhere to step into the room & tune radio</span>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-35 pointer-events-none text-center animate-in fade-in zoom-in-95 duration-500 w-[90vw] max-w-sm">
+          <div className="bg-black/75 backdrop-blur-md px-4 py-2.5 sm:px-5 rounded-full border border-amber-500/30 shadow-2xl flex items-center justify-center gap-2 text-[11px] sm:text-xs font-mono text-amber-300">
+            <Volume2 className="w-4 h-4 text-amber-400 animate-pulse flex-shrink-0" />
+            <span className="truncate">Tap anywhere to step into room & tune radio</span>
           </div>
         </div>
       )}
@@ -211,11 +221,12 @@ export default function MonsoonWindow({ location = 'generic' }: MonsoonWindowPro
 
       {/* 6. Soundboard / Ambient Mixer Popover */}
       {isMixerOpen && (
-        <div className="fixed bottom-24 right-4 sm:right-8 z-40 animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed bottom-24 sm:bottom-28 right-3 left-3 sm:left-auto sm:right-8 z-40 max-w-sm ml-auto animate-in fade-in slide-in-from-bottom-4 duration-300">
           <AmbientMixer
             settings={ambientSettings}
             onChange={setAmbientSettings}
             rainIntensity={activePeriod.rainIntensity || 0.5}
+            onClose={() => setIsMixerOpen(false)}
           />
         </div>
       )}

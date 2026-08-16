@@ -30,15 +30,15 @@ export default function Room({
       <Curtains />
 
       {/* 2. Clean, unobstructed outer window frame casing with subtle inner shadow */}
-      <div className="absolute inset-0 border-[8px] sm:border-[12px] border-[#1a0f08] pointer-events-none shadow-[inset_0_0_30px_rgba(0,0,0,0.85)] z-22" />
+      <div className="absolute inset-0 border-[4px] sm:border-[12px] border-[#1a0f08] pointer-events-none shadow-[inset_0_0_30px_rgba(0,0,0,0.85)] z-22" />
 
-      {/* 3. Reduced Thinner Wooden Window Sill / Desk Edge (~10-12% Viewport Height) */}
-      <div className="absolute inset-x-0 bottom-0 h-20 sm:h-24 bg-gradient-to-t from-[#0c0805] via-[#170e09] to-[#26160e] border-t-2 border-[#3d2314] shadow-[0_-10px_30px_rgba(0,0,0,0.95)] pointer-events-auto z-35 flex items-center justify-between px-3 sm:px-10">
+      {/* 3. Reduced Thinner Wooden Window Sill / Desk Edge */}
+      <div className="absolute inset-x-0 bottom-0 h-2 sm:h-24 bg-gradient-to-t from-[#0c0805] via-[#170e09] to-[#26160e] border-t-2 border-[#3d2314] shadow-[0_-10px_30px_rgba(0,0,0,0.95)] pointer-events-none sm:pointer-events-auto z-35 flex items-center justify-between px-3 sm:px-10">
         {/* Subtle Specular Highlight Lip on Sill Edge */}
         <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-amber-500/25 to-transparent pointer-events-none" />
 
-        {/* Left Side: Monsoon Diary Card on Desk */}
-        <div className="flex items-center gap-3 relative z-45 pointer-events-auto">
+        {/* Left Side: Monsoon Diary Card on Desk (Desktop) */}
+        <div className="hidden sm:flex items-center gap-3 relative z-45 pointer-events-auto">
           <button
             type="button"
             onClick={(e) => {
@@ -59,8 +59,8 @@ export default function Room({
           </button>
         </div>
 
-        {/* Right Side: Monsoon FM Station Status Card */}
-        <div className="relative z-45 pointer-events-auto">
+        {/* Right Side: Monsoon FM Station Status Card (Desktop) */}
+        <div className="hidden sm:block relative z-45 pointer-events-auto">
           <button
             type="button"
             onClick={(e) => {
@@ -82,7 +82,7 @@ export default function Room({
                   MONSOON FM
                 </span>
               </div>
-              <p className="text-[11px] font-bold text-white truncate max-w-[110px] sm:max-w-[150px] leading-tight">
+              <p suppressHydrationWarning className="text-[11px] font-bold text-white truncate max-w-[110px] sm:max-w-[150px] leading-tight">
                 {songTitle}
               </p>
             </div>

@@ -3,18 +3,20 @@
 import React, { useState, useEffect } from 'react';
 import { AmbientSettings } from '@/types';
 import { audioEngine } from '@/lib/audioEngine';
-import { Volume2, VolumeX, CloudRain, Car, Wind, Zap, Sliders } from 'lucide-react';
+import { Volume2, VolumeX, CloudRain, Car, Wind, Zap, Sliders, X } from 'lucide-react';
 
 interface AmbientMixerProps {
   settings: AmbientSettings;
   onChange: (newSettings: AmbientSettings) => void;
   rainIntensity: number;
+  onClose?: () => void;
 }
 
 export default function AmbientMixer({
   settings,
   onChange,
   rainIntensity,
+  onClose,
 }: AmbientMixerProps) {
   const [thunderCooldown, setThunderCooldown] = useState(0);
 
@@ -55,7 +57,7 @@ export default function AmbientMixer({
   };
 
   return (
-    <div className="bg-[#120e0b]/90 border border-white/10 backdrop-blur-xl rounded-2xl p-4 sm:p-5 shadow-2xl text-white w-full max-w-sm">
+    <div className="bg-[#120e0b]/95 border border-white/15 backdrop-blur-xl rounded-2xl p-4 sm:p-5 shadow-2xl text-white w-full max-w-sm">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
         <div className="flex items-center gap-2">
@@ -64,17 +66,28 @@ export default function AmbientMixer({
             Atmospheric Soundboard
           </h3>
         </div>
-        <button
-          onClick={toggleMute}
-          className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-            settings.isMuted
-              ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-              : 'bg-white/5 hover:bg-white/10 text-amber-400'
-          }`}
-          title={settings.isMuted ? 'Unmute All' : 'Mute All'}
-        >
-          {settings.isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={toggleMute}
+            className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+              settings.isMuted
+                ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                : 'bg-white/5 hover:bg-white/10 text-amber-400'
+            }`}
+            title={settings.isMuted ? 'Unmute All' : 'Mute All'}
+          >
+            {settings.isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          </button>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors cursor-pointer"
+              title="Close Soundboard"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Sliders */}

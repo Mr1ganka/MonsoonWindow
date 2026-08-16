@@ -181,31 +181,39 @@ class MonsoonAudioEngine {
   }
 
   public updateSettings(settings: AmbientSettings, rainIntensity: number) {
-    if (!this.ctx) return;
-    const now = this.ctx.currentTime;
+    if (!this.ctx || !this.isInitialized) return;
+    try {
+      const now = this.ctx.currentTime;
+      const safeIntensity = Math.max(0, Math.min(1, typeof rainIntensity === 'number' && !isNaN(rainIntensity) ? rainIntensity : 0.5));
 
-    if (this.masterGain) {
-      const targetMaster = settings.isMuted ? 0 : settings.masterVolume;
-      this.masterGain.gain.setTargetAtTime(targetMaster, now, 0.05);
-    }
+      if (this.masterGain) {
+        const targetMaster = settings.isMuted ? 0 : Math.max(0, Math.min(1, settings.masterVolume ?? 0.8));
+        this.masterGain.gain.setTargetAtTime(targetMaster, now, 0.05);
+      }
 
-    if (this.rainGain) {
-      const targetRain = settings.rainVolume * (0.3 + rainIntensity * 0.7);
-      this.rainGain.gain.setTargetAtTime(targetRain, now, 0.1);
-    }
+      if (this.rainGain) {
+        const safeRainVol = Math.max(0, Math.min(1, settings.rainVolume ?? 0.8));
+        const targetRain = safeRainVol * (0.3 + safeIntensity * 0.7);
+        this.rainGain.gain.setTargetAtTime(targetRain, now, 0.1);
+      }
 
-    if (this.rainLowFilter) {
-      // Scale frequency with intensity for heavier sound
-      const freq = 1200 + rainIntensity * 2800;
-      this.rainLowFilter.frequency.setTargetAtTime(freq, now, 0.1);
-    }
+      if (this.rainLowFilter) {
+        // Scale frequency with intensity for heavier sound
+        const freq = Math.max(200, Math.min(18000, 1200 + safeIntensity * 2800));
+        this.rainLowFilter.frequency.setTargetAtTime(freq, now, 0.1);
+      }
 
-    if (this.trafficGain) {
-      this.trafficGain.gain.setTargetAtTime(settings.trafficVolume, now, 0.1);
-    }
+      if (this.trafficGain) {
+        const targetTraffic = Math.max(0, Math.min(1, settings.trafficVolume ?? 0.6));
+        this.trafficGain.gain.setTargetAtTime(targetTraffic, now, 0.1);
+      }
 
-    if (this.roomGain) {
-      this.roomGain.gain.setTargetAtTime(settings.roomVolume, now, 0.1);
+      if (this.roomGain) {
+        const targetRoom = Math.max(0, Math.min(1, settings.roomVolume ?? 0.2));
+        this.roomGain.gain.setTargetAtTime(targetRoom, now, 0.1);
+      }
+    } catch (e) {
+      console.warn('Error updating ambient audio settings:', e);
     }
   }
 }

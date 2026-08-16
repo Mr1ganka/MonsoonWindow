@@ -16,32 +16,32 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-50 pointer-events-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300 select-none"
+      className="fixed inset-0 z-50 pointer-events-auto flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300 select-none"
     >
-      <div className="relative w-full max-w-2xl bg-[#140e0a] text-monsoon-cream rounded-2xl shadow-2xl border border-white/10 overflow-hidden flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl bg-[#140e0a] text-monsoon-cream rounded-2xl shadow-2xl border border-white/10 overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[85vh] animate-in zoom-in-95 duration-200">
         {/* Modal Header */}
-        <div className="bg-[#1f150f] px-6 py-4 flex items-center justify-between border-b border-white/10">
-          <div className="flex items-center gap-2.5">
-            <CloudRain className="w-5 h-5 text-amber-400" />
-            <div>
-              <h2 className="text-sm font-mono uppercase tracking-widest text-amber-400 font-bold">
+        <div className="bg-[#1f150f] px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between border-b border-white/10">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <CloudRain className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 flex-shrink-0" />
+            <div className="min-w-0">
+              <h2 className="text-xs sm:text-sm font-mono uppercase tracking-widest text-amber-400 font-bold truncate">
                 About Monsoon Window (मानसून विंडो)
               </h2>
-              <p className="text-[10px] text-white/50 font-serif italic">
+              <p className="text-[9px] sm:text-[10px] text-white/50 font-serif italic truncate">
                 “Somewhere between the rain and the radio.”
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-white/10 rounded-full transition-colors text-white/70 hover:text-white cursor-pointer"
+            className="p-1.5 hover:bg-white/10 rounded-full transition-colors text-white/70 hover:text-white cursor-pointer flex-shrink-0"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-xs sm:text-sm leading-relaxed text-monsoon-cream/80 font-sans">
+        <div className="p-4 sm:p-8 overflow-y-auto space-y-4 sm:space-y-6 text-xs sm:text-sm leading-relaxed text-monsoon-cream/80 font-sans">
           <div>
             <h3 className="text-base font-bold text-white mb-1.5 font-serif">
               An Atmospheric Indian Monsoon Sanctuary

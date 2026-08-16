@@ -66,6 +66,12 @@ export default function RadioPlayer({
     }
   }, [song.id, song.durationSeconds]);
 
+  // Keep onNext reference current for YouTube player callbacks
+  const onNextRef = useRef(onNext);
+  useEffect(() => {
+    onNextRef.current = onNext;
+  }, [onNext]);
+
   // 1. Reliable YouTube IFrame API Script Loader
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -130,13 +136,13 @@ export default function RadioPlayer({
               setPlayerState(event.data);
               // 0 = YT.PlayerState.ENDED
               if (event.data === 0) {
-                onNext();
+                onNextRef.current();
               }
             },
             onError: (err: any) => {
-              console.warn('YouTube video error (code:', err.data, '), advancing track...');
+              console.warn('YouTube video error (code:', err?.data, '), advancing track...');
               setTimeout(() => {
-                onNext();
+                onNextRef.current();
               }, 1200);
             },
           },
@@ -295,11 +301,11 @@ export default function RadioPlayer({
       )}
 
       {/* Main Glassmorphic Radio Console */}
-      <div className="bg-[#120e0b]/94 border border-white/15 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex flex-col md:flex-row items-center justify-between gap-4 pointer-events-auto">
+      <div className="bg-[#120e0b]/94 border border-white/15 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex flex-col md:flex-row items-center justify-between gap-2.5 sm:gap-4 pointer-events-auto">
         {/* Left Side: Retro TV/Cassette Screen & Program Metadata */}
-        <div className="w-full md:w-1/2 flex items-center gap-3.5 bg-black/60 border border-white/8 rounded-xl p-2.5 shadow-inner">
+        <div className="w-full md:w-1/2 flex items-center gap-2.5 sm:gap-3.5 bg-black/60 border border-white/8 rounded-xl p-2 sm:p-2.5 shadow-inner">
           {/* Vintage CRT / Cassette Monitor Screen with Live YouTube Video */}
-          <div className="relative w-24 h-16 sm:w-28 sm:h-18 rounded-lg overflow-hidden border border-white/15 flex-shrink-0 bg-black shadow-md group">
+          <div className="relative w-20 h-14 sm:w-28 sm:h-18 rounded-lg overflow-hidden border border-white/15 flex-shrink-0 bg-black shadow-md group">
             {/* The Live YouTube Video Embed mounts here */}
             <div className="w-full h-full overflow-hidden">
               <div id="yt-radio-screen" className="w-full h-full object-cover pointer-events-auto" />
@@ -317,15 +323,15 @@ export default function RadioPlayer({
                   alt={song.title}
                   className="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none"
                 />
-                <div className="relative z-10 w-8 h-8 rounded-full bg-amber-500 text-black flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                  <Play className="w-4 h-4 fill-current ml-0.5" />
+                <div className="relative z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-amber-500 text-black flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                  <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current ml-0.5" />
                 </div>
               </div>
             )}
 
             {/* Equalizer animation when playing */}
             {isPlaying && (
-              <div className="absolute bottom-1 right-1 bg-black/70 px-1.5 py-0.5 rounded border border-white/10 z-20 pointer-events-none">
+              <div className="absolute bottom-1 right-1 bg-black/70 px-1 py-0.5 rounded border border-white/10 z-20 pointer-events-none">
                 <Equalizer isPlaying={isPlaying} barCount={3} color="#f59e0b" />
               </div>
             )}
@@ -336,36 +342,39 @@ export default function RadioPlayer({
 
           {/* Song text & credits */}
           <div className="flex-grow min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="inline-block bg-amber-500/20 text-amber-300 text-[9px] font-mono font-bold px-2 py-0.5 rounded tracking-widest uppercase">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span
+                suppressHydrationWarning
+                className="inline-block bg-amber-500/20 text-amber-300 text-[8px] sm:text-[9px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded tracking-widest uppercase"
+              >
                 {program.title}
               </span>
-              <span className="text-[10px] text-white/40 hidden sm:inline font-mono">
+              <span suppressHydrationWarning className="text-[9px] sm:text-[10px] text-white/40 hidden sm:inline font-mono">
                 {program.frequency}
               </span>
             </div>
 
-            <h3 className="text-sm sm:text-base font-bold text-white truncate mt-0.5">
+            <h3 suppressHydrationWarning className="text-xs sm:text-base font-bold text-white truncate mt-0.5">
               {song.title}
             </h3>
 
-            <p className="text-xs text-amber-200/70 truncate">
+            <p suppressHydrationWarning className="text-[10px] sm:text-xs text-amber-200/70 truncate">
               {song.artist} {song.film ? `• ${song.film}` : ''} ({song.year || 'Retro'})
             </p>
           </div>
 
           {/* Quick Action Buttons */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 flex-shrink-0">
             <button
               onClick={() => setShowLargeScreen(true)}
-              className="p-1.5 hover:bg-white/10 rounded-lg border border-white/10 text-white/70 hover:text-amber-400 transition-colors flex-shrink-0"
+              className="p-1 sm:p-1.5 hover:bg-white/10 rounded-lg border border-white/10 text-white/70 hover:text-amber-400 transition-colors flex-shrink-0 cursor-pointer"
               title="Expand Cinema Screen"
             >
               <Tv className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={onOpenDrawer}
-              className="p-1.5 hover:bg-white/10 rounded-lg border border-white/10 text-white/70 hover:text-amber-400 transition-colors flex-shrink-0"
+              className="p-1 sm:p-1.5 hover:bg-white/10 rounded-lg border border-white/10 text-white/70 hover:text-amber-400 transition-colors flex-shrink-0 cursor-pointer"
               title="Browse Cassette Tapes"
             >
               <ListMusic className="w-3.5 h-3.5" />
@@ -374,22 +383,22 @@ export default function RadioPlayer({
         </div>
 
         {/* Right Side: Player Controls & Soundboard */}
-        <div className="w-full md:w-1/2 flex flex-col gap-2.5">
-          <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4">
+        <div className="w-full md:w-1/2 flex flex-col gap-2 sm:gap-2.5">
+          <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-4">
             {/* Ambient Soundboard Toggle */}
             <button
               onClick={onOpenMixer}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-mono text-amber-300 transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] sm:text-xs font-mono text-amber-300 transition-colors cursor-pointer"
               title="Open Soundboard"
             >
-              <Sliders className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Ambience</span>
+              <Sliders className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span>Ambience</span>
             </button>
 
             {/* Skip Previous */}
             <button
               onClick={onPrev}
-              className="p-2 text-white/70 hover:text-amber-400 transition-colors active:scale-95 cursor-pointer"
+              className="p-1.5 sm:p-2 text-white/70 hover:text-amber-400 transition-colors active:scale-95 cursor-pointer"
               title="Previous Track"
             >
               <SkipBack className="w-4 h-4" />
@@ -398,26 +407,26 @@ export default function RadioPlayer({
             {/* Play / Pause Primary Button */}
             <button
               onClick={onPlayToggle}
-              className="w-11 h-11 rounded-full bg-amber-500 text-black hover:bg-amber-400 flex items-center justify-center transition-all active:scale-95 shadow-[0_0_20px_rgba(245,158,11,0.5)] cursor-pointer"
+              className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-amber-500 text-black hover:bg-amber-400 flex items-center justify-center transition-all active:scale-95 shadow-[0_0_20px_rgba(245,158,11,0.5)] cursor-pointer flex-shrink-0"
               title={isPlaying ? 'Pause Radio' : 'Play Radio'}
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5 fill-current" />
+                <Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
               ) : (
-                <Play className="w-5 h-5 fill-current ml-0.5" />
+                <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current ml-0.5" />
               )}
             </button>
 
             {/* Skip Next */}
             <button
               onClick={onNext}
-              className="p-2 text-white/70 hover:text-amber-400 transition-colors active:scale-95 cursor-pointer"
+              className="p-1.5 sm:p-2 text-white/70 hover:text-amber-400 transition-colors active:scale-95 cursor-pointer"
               title="Next Track"
             >
               <SkipForward className="w-4 h-4" />
             </button>
 
-            {/* Volume Control */}
+            {/* Volume Control (Tablet/Desktop) */}
             <div className="hidden sm:flex items-center gap-2 bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/5 max-w-[130px]">
               <button
                 onClick={toggleMute}
@@ -442,20 +451,20 @@ export default function RadioPlayer({
           </div>
 
           {/* Progress Bar & Seek */}
-          <div className="w-full flex items-center gap-2.5">
-            <span className="text-[10px] font-mono text-white/40 w-8 text-right tabular-nums">
+          <div className="w-full flex items-center gap-2 sm:gap-2.5">
+            <span suppressHydrationWarning className="text-[9px] sm:text-[10px] font-mono text-white/40 w-7 sm:w-8 text-right tabular-nums">
               {formatTime(currentTime)}
             </span>
             <div
               onClick={handleSeek}
-              className="relative flex-grow h-1.5 bg-white/10 rounded-full cursor-pointer overflow-hidden group"
+              className="relative flex-grow h-2 sm:h-1.5 bg-white/10 rounded-full cursor-pointer overflow-hidden group py-1 sm:py-0"
             >
               <div
                 className="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.8)] transition-all duration-200"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            <span className="text-[10px] font-mono text-white/40 w-8 tabular-nums">
+            <span suppressHydrationWarning className="text-[9px] sm:text-[10px] font-mono text-white/40 w-7 sm:w-8 tabular-nums">
               {formatTime(duration)}
             </span>
           </div>

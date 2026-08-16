@@ -84,9 +84,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${inter.variable} ${rozhaOne.variable} ${cinzel.variable} ${spaceMono.variable} h-full antialiased`}
     >
-      <body className="h-full bg-[#0c0a09] text-white selection:bg-amber-500/30 selection:text-amber-300 overflow-hidden">
+      <body
+        suppressHydrationWarning
+        className="h-full bg-[#0c0a09] text-white selection:bg-amber-500/30 selection:text-amber-300 overflow-hidden"
+      >
         {children}
       </body>
     </html>
